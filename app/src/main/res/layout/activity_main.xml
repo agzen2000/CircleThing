@@ -10,4 +10,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.games.akash.circlething.MainActivity">
 
+    <com.games.akash.circlething.Circle
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </LinearLayout>

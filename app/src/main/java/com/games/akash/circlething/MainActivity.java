@@ -19,7 +19,9 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         c = new Circle(this);
-        setContentView(c);
+        setContentView(R.layout.activity_main);
+
+
 
     }
 }
