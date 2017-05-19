@@ -47,19 +47,19 @@ public class Circle extends View
 
         baseCircle = new ShapeDrawable(new OvalShape());
         baseCircle.getPaint().setColor(Color.GRAY);
-        baseCircle.setBounds(x-radius, y-(int)(1.5*radius), x+radius, y+(int)(0.5*radius));
+        baseCircle.setBounds(x-radius, y-radius, x+radius, y+radius);
 
         goodGate = new ShapeDrawable(new ArcShape(260,20));
         goodGate.getPaint().setColor(Color.GREEN);
-        goodGate.setBounds(x-radius, y-(int)(1.5*radius), x+radius, y+(int)(0.5*radius));
+        goodGate.setBounds(x-radius, y-radius, x+radius, y+radius);
 
         badGate= new ShapeDrawable(new ArcShape(80,20));
         badGate.getPaint().setColor(Color.RED);
-        badGate.setBounds(x-radius, y-(int)(1.5*radius), x+radius, y+(int)(0.5*radius));
+        badGate.setBounds(x-radius, y-radius, x+radius, y+radius);
 
         topCircle = new ShapeDrawable(new OvalShape());
         topCircle.getPaint().setColor(Color.WHITE);
-        topCircle.setBounds(x-radius+x/8, y-(int)(1.5*radius)+x/8, x+radius - x/8, y+(int)(0.5*radius) - x/8);
+        topCircle.setBounds(x-radius+x/8, y-radius+x/8, x+radius - x/8, y+radius - x/8);
     }
 
     @Override

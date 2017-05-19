@@ -7,7 +7,6 @@
     tools:context="com.games.akash.circlething.MainActivity">
 
     <com.games.akash.circlething.Circle
-        android:layout_margin="0dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/circle" />
