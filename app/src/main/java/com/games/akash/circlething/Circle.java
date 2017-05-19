@@ -7,7 +7,9 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.ArcShape;
 import android.graphics.drawable.shapes.OvalShape;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 /**
  * Created by endenoa18 on 5/15/2017.
@@ -36,6 +38,36 @@ public class Circle extends View
     public Circle(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int eventAction = event.getAction();
+
+        int x = (int)event.getX();
+        int y = (int)event.getY();
+
+        // put your code in here to handle the event
+        switch (eventAction) {
+            case MotionEvent.ACTION_DOWN:
+                Toast.makeText(getContext(), "Down", Toast.LENGTH_SHORT).show();
+                break;
+            case MotionEvent.ACTION_UP:
+                Toast.makeText(getContext(), "Up", Toast.LENGTH_SHORT).show();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                Toast.makeText(getContext(), "Moved", Toast.LENGTH_SHORT).show();
+                break;
+        }
+
+        invalidate();
+        return true;
+    }
+
+    @Override
+    public void setOnTouchListener(OnTouchListener l) {
+
+        super.setOnTouchListener(l);
     }
 
     public void init(Context context)
