@@ -1,7 +1,17 @@
 package com.games.akash.circlething;
 
 
+import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.util.AttributeSet;
+import android.view.View;
+import java.util.Random;
 
 import java.util.Objects;
 
@@ -9,72 +19,90 @@ import java.util.Objects;
  * Created by benamar18 on 5/12/2017.
  */
 
-public class Ball {
+public class Ball extends View {
 
+    private ShapeDrawable ball;
+    int deviceWidth = this.getResources().getDisplayMetrics().widthPixels;
+    int deviceHeight = this.getResources().getDisplayMetrics().heightPixels;
+    public final int RADIUS = deviceWidth/20;
+    private static int Vx = 0;
+    private static int Vy = 5;
+    private static int x;
+    private static int y;
+    private static int Vt = 5;
+    Thread m;
+    private boolean stop = false;
 
-
-    public final int ballRadius =5;
-    private double ballSpeed;
-    private Color color;
-    private int direction;
-    private double x;
-    private double y;
-
-    public Ball( double speed,Color color,double x, double y  ){
-
-        this.ballSpeed = speed;
-        this.color= color;
-        this.x = x;
-        this.y=y;
-
+    public Ball(Context context) {
+        super(context);
+        init(context);
     }
 
-
-
-
-
-    public void setBallSpeed(double s) {
-        ballSpeed = s;
-
+    public Ball(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(context);
     }
 
-    public double getBallSpeed(){
-        return ballSpeed;
+    public Ball(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init(context);
     }
 
+    private void init (Context context) {
+        int x = deviceWidth /2;
+        int y = deviceHeight /2;
 
-    public void  setcolor(Color c){
-        color= c;
-    }
-    public Color getColor (){
-        return  color;
-    }
-
-    public void setDirection(int d){
-        direction = d;
-    }
-    public int getDirection(){
-        return  direction;
-    }
-    public void setX(double x) {
-         this.x  = x;
-
+        ball = new ShapeDrawable(new OvalShape());
+        ball.getPaint().setColor(Color.BLUE);
+        ball.setBounds(x-RADIUS, y-RADIUS, x+RADIUS, y+RADIUS);
+        Random rand = new Random();
+        m = new Thread(move);
+        m.start();
     }
 
-    public double getX() {
-        return x;
+    final Handler moveHandler = new Handler(Looper.getMainLooper())
+    {
+        @Override
+        public void handleMessage(Message msg)
+        {
+            ball.setBounds(ball.getBounds().top+Vy, ball.getBounds().right+Vx,
+                    ball.getBounds().bottom+Vy, ball.getBounds().left+Vx);
+            invalidate();
+        }
+    };
+
+    final Runnable move = new Runnable()
+    {
+        @Override
+        public void run()
+        {
+            while(!stop)
+            {
+                moveHandler.sendEmptyMessage(0);
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+
+
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        ball.draw(canvas);
     }
-    public void setY(double y) {
-        this.y = y;
 
+    public void setVelocity(int v)
+    {
+        this.Vt = v;
     }
 
-    public double getY() {
-        return y;
+    public int getVelocity()
+    {
+        return Vt;
     }
-
-
-
-
 }
 
