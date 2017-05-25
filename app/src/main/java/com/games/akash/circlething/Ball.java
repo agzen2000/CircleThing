@@ -25,11 +25,13 @@ public class Ball extends View {
     int deviceWidth = this.getResources().getDisplayMetrics().widthPixels;
     int deviceHeight = this.getResources().getDisplayMetrics().heightPixels;
     public final int RADIUS = deviceWidth/20;
-    private static int Vx = 0;
+    private static int Vx = 5;
     private static int Vy = 5;
-    private static int x;
-    private static int y;
     private static int Vt = 5;
+    private static int l;
+    private static int r;
+    private static int t;
+    private static int b;
     Thread m;
     private boolean stop = false;
 
@@ -55,7 +57,7 @@ public class Ball extends View {
         ball = new ShapeDrawable(new OvalShape());
         ball.getPaint().setColor(Color.BLUE);
         ball.setBounds(x-RADIUS, y-RADIUS, x+RADIUS, y+RADIUS);
-        Random rand = new Random();
+
         m = new Thread(move);
         m.start();
     }
@@ -65,8 +67,15 @@ public class Ball extends View {
         @Override
         public void handleMessage(Message msg)
         {
-            ball.setBounds(ball.getBounds().top+Vy, ball.getBounds().right+Vx,
-                    ball.getBounds().bottom+Vy, ball.getBounds().left+Vx);
+            l = ball.getBounds().left;
+            r = ball.getBounds().right;
+            t = ball.getBounds().top;
+            b = ball.getBounds().bottom;
+            l+=Vx;
+            r+=Vx;
+            t+=Vy;
+            b+=Vy;
+            ball.setBounds(l, t, r, b);
             invalidate();
         }
     };
@@ -93,16 +102,6 @@ public class Ball extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         ball.draw(canvas);
-    }
-
-    public void setVelocity(int v)
-    {
-        this.Vt = v;
-    }
-
-    public int getVelocity()
-    {
-        return Vt;
     }
 }
 
