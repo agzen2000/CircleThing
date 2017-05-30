@@ -11,9 +11,8 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
-import java.util.Random;
 
-import java.util.Objects;
+import java.util.Random;
 
 /**
  * Created by benamar18 on 5/12/2017.
@@ -25,13 +24,16 @@ public class Ball extends View {
     int deviceWidth = this.getResources().getDisplayMetrics().widthPixels;
     int deviceHeight = this.getResources().getDisplayMetrics().heightPixels;
     public final int RADIUS = deviceWidth/20;
-    private static int Vx = 0;
-    private static int Vy = 5;
-    private static int x;
-    private static int y;
-    private static int Vt = 5;
-    Thread m;
+    private double angle = 1000;
+    private static double vX;
+    private static double vY;
+    private static int vT = 5;
+    private static int left;
+    private static int right;
+    private static int top;
+    private static int bottom;
     private boolean stop = false;
+    private Thread mThread;
 
     public Ball(Context context) {
         super(context);
@@ -55,9 +57,20 @@ public class Ball extends View {
         ball = new ShapeDrawable(new OvalShape());
         ball.getPaint().setColor(Color.BLUE);
         ball.setBounds(x-RADIUS, y-RADIUS, x+RADIUS, y+RADIUS);
-        Random rand = new Random();
-        m = new Thread(move);
-        m.start();
+        if(angle == 1000) {
+            Random rand = new Random();
+            angle = rand.nextInt(361);
+            angle = Math.toRadians(angle);
+        }
+
+        double cos = Math.cos(angle);
+        double sin = Math.sin(angle);
+
+        vX = cos * vT;
+        vY = sin * vT;
+
+        mThread = new Thread(move);
+        mThread.start();
     }
 
     final Handler moveHandler = new Handler(Looper.getMainLooper())
@@ -65,8 +78,16 @@ public class Ball extends View {
         @Override
         public void handleMessage(Message msg)
         {
-            ball.setBounds(ball.getBounds().top+Vy, ball.getBounds().right+Vx,
-                    ball.getBounds().bottom+Vy, ball.getBounds().left+Vx);
+            left = ball.getBounds().left;
+            right = ball.getBounds().right;
+            top = ball.getBounds().top;
+            bottom = ball.getBounds().bottom;
+
+            left+=vX;
+            right+=vX;
+            top+=vY;
+            bottom+=vY;
+            ball.setBounds(left, top, right, bottom);
             invalidate();
         }
     };
@@ -93,16 +114,6 @@ public class Ball extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         ball.draw(canvas);
-    }
-
-    public void setVelocity(int v)
-    {
-        this.Vt = v;
-    }
-
-    public int getVelocity()
-    {
-        return Vt;
     }
 }
 
