@@ -6,6 +6,9 @@ import android.graphics.Color;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.ArcShape;
 import android.graphics.drawable.shapes.OvalShape;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,8 +24,13 @@ public class Circle extends View
     private ShapeDrawable goodGate;
     private ShapeDrawable badGate;
     private ShapeDrawable topCircle;
+    private boolean down = false;
+    private int angle = 80;
     int mWidth= this.getResources().getDisplayMetrics().widthPixels;
     int mHeight= this.getResources().getDisplayMetrics().heightPixels;
+    int radius = 2 * mWidth/5;
+    int x = mWidth/2;
+    int y = mHeight/2;
 
     public Circle(Context context) {
         super(context);
@@ -40,23 +48,77 @@ public class Circle extends View
         init(context);
     }
 
+    final Handler rHandler = new Handler(Looper.getMainLooper()){
+        @Override
+        public void handleMessage(Message msg)
+        {
+            angle+=1;
+            invalidate();
+        }
+    };
+    final Handler lHandler = new Handler(Looper.getMainLooper()){
+        @Override
+        public void handleMessage(Message msg)
+        {
+            angle+=359;
+            invalidate();
+        }
+    };
+
+    final Runnable rotateR = new Runnable() {
+        @Override
+        public void run() {
+            while(down)
+            {
+                rHandler.sendEmptyMessage(0);
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+    final Runnable rotateL = new Runnable() {
+        @Override
+        public void run() {
+            while(down)
+            {
+                lHandler.sendEmptyMessage(0);
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int eventAction = event.getAction();
 
         int x = (int)event.getX();
-        int y = (int)event.getY();
 
         // put your code in here to handle the event
         switch (eventAction) {
             case MotionEvent.ACTION_DOWN:
-                Toast.makeText(getContext(), "Down", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "Down", Toast.LENGTH_SHORT).show();
+                down = true;
+                if(x>=mWidth/2)
+                {
+                    Thread t = new Thread(rotateR);
+                    t.start();
+                }
+                if(x<mWidth/2)
+                {
+                    Thread t = new Thread(rotateL);
+                    t.start();
+                }
                 break;
             case MotionEvent.ACTION_UP:
-                Toast.makeText(getContext(), "Up", Toast.LENGTH_SHORT).show();
-                break;
-            case MotionEvent.ACTION_MOVE:
-                Toast.makeText(getContext(), "Moved", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "Up", Toast.LENGTH_SHORT).show();
+                down = false;
                 break;
         }
 
@@ -72,22 +134,9 @@ public class Circle extends View
 
     public void init(Context context)
     {
-        int radius = 2 * mWidth/5;
-        int x = mWidth/2;
-        int y = mHeight/2;
-
-
         baseCircle = new ShapeDrawable(new OvalShape());
         baseCircle.getPaint().setColor(Color.GRAY);
         baseCircle.setBounds(x-radius, y-radius, x+radius, y+radius);
-
-        goodGate = new ShapeDrawable(new ArcShape(260,20));
-        goodGate.getPaint().setColor(Color.GREEN);
-        goodGate.setBounds(x-radius, y-radius, x+radius, y+radius);
-
-        badGate= new ShapeDrawable(new ArcShape(80,20));
-        badGate.getPaint().setColor(Color.RED);
-        badGate.setBounds(x-radius, y-radius, x+radius, y+radius);
 
         topCircle = new ShapeDrawable(new OvalShape());
         topCircle.getPaint().setColor(Color.WHITE);
@@ -97,6 +146,14 @@ public class Circle extends View
     @Override
     protected void onDraw(Canvas canvas)
     {
+        goodGate = new ShapeDrawable(new ArcShape(angle+180,20));
+        goodGate.getPaint().setColor(Color.GREEN);
+        goodGate.setBounds(x-radius, y-radius, x+radius, y+radius);
+
+        badGate= new ShapeDrawable(new ArcShape(angle,20));
+        badGate.getPaint().setColor(Color.RED);
+        badGate.setBounds(x-radius, y-radius, x+radius, y+radius);
+
         baseCircle.draw(canvas);
         goodGate.draw(canvas);
         badGate.draw(canvas);
