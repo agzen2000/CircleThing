@@ -24,7 +24,8 @@ public class Circle extends View
     private ShapeDrawable goodGate;
     private ShapeDrawable badGate;
     private ShapeDrawable topCircle;
-    private boolean down = false;
+    private boolean lDown = false;
+    private boolean rDown = false;
     private int angle = 80;
     int mWidth= this.getResources().getDisplayMetrics().widthPixels;
     int mHeight= this.getResources().getDisplayMetrics().heightPixels;
@@ -48,43 +49,30 @@ public class Circle extends View
         init(context);
     }
 
-    final Handler rHandler = new Handler(Looper.getMainLooper()){
+    final Handler rotateHandler = new Handler(Looper.getMainLooper()){
         @Override
         public void handleMessage(Message msg)
         {
-            angle+=1;
-            invalidate();
-        }
-    };
-    final Handler lHandler = new Handler(Looper.getMainLooper()){
-        @Override
-        public void handleMessage(Message msg)
-        {
-            angle+=359;
-            invalidate();
-        }
-    };
-
-    final Runnable rotateR = new Runnable() {
-        @Override
-        public void run() {
-            while(down)
+            if(lDown)
             {
-                rHandler.sendEmptyMessage(0);
-                try {
-                    Thread.sleep(20);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                angle-=1;
+                invalidate();
+            }
+            if(rDown)
+            {
+                angle+=1;
+                invalidate();
             }
         }
     };
-    final Runnable rotateL = new Runnable() {
+
+    final Runnable rotate = new Runnable() {
         @Override
-        public void run() {
-            while(down)
+        public void run()
+        {
+            while(lDown||rDown)
             {
-                lHandler.sendEmptyMessage(0);
+                rotateHandler.sendEmptyMessage(0);
                 try {
                     Thread.sleep(20);
                 } catch (InterruptedException e) {
@@ -100,26 +88,40 @@ public class Circle extends View
 
         int x = (int)event.getX();
 
+
         // put your code in here to handle the event
         switch (eventAction) {
             case MotionEvent.ACTION_DOWN:
                 //Toast.makeText(getContext(), "Down", Toast.LENGTH_SHORT).show();
-                down = true;
                 if(x>=mWidth/2)
                 {
-                    Thread t = new Thread(rotateR);
+                    rDown = true;
+                    Thread t = new Thread(rotate);
                     t.start();
                 }
                 if(x<mWidth/2)
                 {
-                    Thread t = new Thread(rotateL);
+                    lDown = true;
+                    Thread t = new Thread(rotate);
                     t.start();
                 }
                 break;
             case MotionEvent.ACTION_UP:
                 //Toast.makeText(getContext(), "Up", Toast.LENGTH_SHORT).show();
-                down = false;
+                lDown = false;
+                rDown = false;
                 break;
+            case MotionEvent.ACTION_MOVE:
+                if(x>=mWidth/2)
+                {
+                    rDown = true;
+                    lDown = false;
+                }
+                if(x<mWidth/2)
+                {
+                    lDown = true;
+                    rDown = false;
+                }
         }
 
         invalidate();
