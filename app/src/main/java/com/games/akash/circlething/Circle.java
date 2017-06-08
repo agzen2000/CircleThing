@@ -55,12 +55,12 @@ public class Circle extends View
         {
             if(lDown)
             {
-                angle-=1;
+                angle-=90;
                 invalidate();
             }
             if(rDown)
             {
-                angle+=1;
+                angle+=90;
                 invalidate();
             }
         }
@@ -70,15 +70,14 @@ public class Circle extends View
         @Override
         public void run()
         {
-            while(lDown||rDown)
-            {
-                rotateHandler.sendEmptyMessage(0);
-                try {
-                    Thread.sleep(20);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
+            rotateHandler.sendEmptyMessage(0);
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+
         }
     };
 
@@ -148,11 +147,11 @@ public class Circle extends View
     @Override
     protected void onDraw(Canvas canvas)
     {
-        goodGate = new ShapeDrawable(new ArcShape(angle+180,20));
+        goodGate = new ShapeDrawable(new ArcShape(angle,90));
         goodGate.getPaint().setColor(Color.GREEN);
         goodGate.setBounds(x-radius, y-radius, x+radius, y+radius);
 
-        badGate= new ShapeDrawable(new ArcShape(angle,20));
+        badGate= new ShapeDrawable(new ArcShape(angle+90,270));
         badGate.getPaint().setColor(Color.RED);
         badGate.setBounds(x-radius, y-radius, x+radius, y+radius);
 
