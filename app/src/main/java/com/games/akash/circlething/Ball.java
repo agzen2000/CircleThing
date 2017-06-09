@@ -21,9 +21,11 @@ import java.util.Random;
 public class Ball extends View {
 
     private ShapeDrawable ball;
-    int deviceWidth = this.getResources().getDisplayMetrics().widthPixels;
-    int deviceHeight = this.getResources().getDisplayMetrics().heightPixels;
-    public final int RADIUS = deviceWidth/20;
+    private int deviceWidth = this.getResources().getDisplayMetrics().widthPixels;
+    private int deviceHeight = this.getResources().getDisplayMetrics().heightPixels;
+    private int x = deviceWidth /2;
+    private int y = deviceHeight /2;
+    public final int RADIUS = deviceWidth/25;
     private double angle = 1000;
     private static double vX;
     private static double vY;
@@ -32,12 +34,16 @@ public class Ball extends View {
     private static int right;
     private static int top;
     private static int bottom;
-    private boolean stop = false;
+    private boolean start = false;
     private Thread mThread;
+    private Circle ring;
 
-    public Ball(Context context) {
+    public Ball(Context context, Circle c, int speed) {
         super(context);
         init(context);
+        vT = speed;
+        ring = c;
+
     }
 
     public Ball(Context context, AttributeSet attrs) {
@@ -51,8 +57,6 @@ public class Ball extends View {
     }
 
     private void init (Context context) {
-        int x = deviceWidth /2;
-        int y = deviceHeight /2;
 
         ball = new ShapeDrawable(new OvalShape());
         ball.getPaint().setColor(Color.BLUE);
@@ -89,6 +93,14 @@ public class Ball extends View {
             bottom+=vY;
             ball.setBounds(left, top, right, bottom);
             invalidate();
+
+            int relativeX = left - x + RADIUS;
+            int relativeY = top - y + RADIUS;
+            int relativeRadius = ring.radius - ring.x/8 - RADIUS;
+
+            if(relativeRadius * relativeRadius <= relativeX * relativeX + relativeY * relativeY) {
+
+            }
         }
     };
 
@@ -97,9 +109,11 @@ public class Ball extends View {
         @Override
         public void run()
         {
-            while(!stop)
+            while(true)
             {
-                moveHandler.sendEmptyMessage(0);
+                if(start) {
+                    moveHandler.sendEmptyMessage(0);
+                }
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
@@ -114,6 +128,10 @@ public class Ball extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         ball.draw(canvas);
+    }
+
+    public void start() {
+        start = true;
     }
 }
 
