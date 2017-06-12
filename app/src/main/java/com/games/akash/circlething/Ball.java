@@ -1,6 +1,7 @@
 package com.games.akash.circlething;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -26,6 +27,7 @@ public class Ball extends View {
     private int x = deviceWidth /2;
     private int y = deviceHeight /2;
     public final int RADIUS = deviceWidth/25;
+    private MainActivity mainActivity;
     private double angle = 1000;
     private static double vX;
     private static double vY;
@@ -38,8 +40,9 @@ public class Ball extends View {
     private Thread mThread;
     private Circle ring;
 
-    public Ball(Context context, Circle c, int speed) {
+    public Ball(Context context, MainActivity main, Circle c, int speed) {
         super(context);
+        mainActivity = main;
         init(context);
         vT = speed;
         ring = c;
@@ -99,7 +102,24 @@ public class Ball extends View {
             int relativeRadius = ring.radius - ring.x/8 - RADIUS;
 
             if(relativeRadius * relativeRadius <= relativeX * relativeX + relativeY * relativeY) {
+                boolean sin = true;
+                boolean cos = true;
+                if(Math.acos(relativeX/relativeRadius) < 0) {
+                    cos = false;
+                }
+                if(Math.asin(relativeY/relativeRadius) < 0) {
+                    sin = false;
+                }
 
+                if(sin && cos) {
+                    mainActivity.complete(ring.angle == 270);
+                } else if(sin && !cos) {
+                    mainActivity.complete(ring.angle == 0);
+                } else if(!sin && cos) {
+                    mainActivity.complete(ring.angle == 180);
+                } else if(!sin && !cos) {
+                    mainActivity.complete(ring.angle == 90);
+                }
             }
         }
     };
