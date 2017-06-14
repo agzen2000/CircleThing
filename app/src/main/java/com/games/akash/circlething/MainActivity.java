@@ -17,15 +17,14 @@ public class MainActivity extends AppCompatActivity
     Circle ring;
     Ball ball;
     RelativeLayout mainLayout;
-    Button btn;
-    TextView txt;
+    Button startBtn;
+    TextView infoTV;
     TextView counter;
     int speed;
     Timer timer;
     int counterNum;
     MainActivity mActivity;
     int streak;
-
     final android.os.Handler setTextHandler = new android.os.Handler(Looper.getMainLooper()){
         @Override
         public void handleMessage(Message msg)
@@ -33,6 +32,7 @@ public class MainActivity extends AppCompatActivity
             counter.setText(String.valueOf(counterNum));
         }
     };
+
     final Runnable setTextRunnable = new Runnable() {
         @Override
         public void run()
@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity
             counter.setVisibility(View.INVISIBLE);
         }
     };
+
     final Runnable setInvisibleRunnable = new Runnable() {
         @Override
         public void run()
@@ -76,24 +77,24 @@ public class MainActivity extends AppCompatActivity
         streak = 0;
         ring = new Circle(this);
         mainLayout = (RelativeLayout)findViewById(R.id.activity_main);
-        btn = (Button) findViewById(R.id.button);
-        txt = (TextView) findViewById(R.id.textView);
+        startBtn = (Button) findViewById(R.id.button);
+        infoTV = (TextView) findViewById(R.id.textView);
         counter = (TextView) findViewById(R.id.counter);
         timer = new Timer();
         mActivity = this;
         counterNum = 3;
         counter.setVisibility(View.INVISIBLE);
         mainLayout.addView(ring, RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
-        btn.bringToFront();
-        txt.bringToFront();
+        startBtn.bringToFront();
+        infoTV.bringToFront();
 
-        btn.setOnClickListener(new View.OnClickListener() {
+        startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ball = new Ball(getApplicationContext(), mActivity, ring, speed);
                 mainLayout.addView(ball, RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
-                btn.setVisibility(View.INVISIBLE);
-                txt.setVisibility(View.INVISIBLE);
+                startBtn.setVisibility(View.INVISIBLE);
+                infoTV.setVisibility(View.INVISIBLE);
                 counter.bringToFront();
                 counter.setText("3");
                 counterNum = 3;
@@ -125,25 +126,25 @@ public class MainActivity extends AppCompatActivity
         ball.setVisibility(View.GONE);
         if(win) {
             streak++;
-            txt.setText("You WON: " + streak);
-            btn.setText("NEXT");
+            infoTV.setText("You WON: " + streak);
+            startBtn.setText("NEXT");
             speed = speed + 1;
         } else {
-            txt.setText("You LOSE");
-            btn.setText("RETRY");
+            infoTV.setText("You LOSE");
+            startBtn.setText("RETRY");
             speed = 5;
             streak = 0;
         }
-        btn.setVisibility(View.VISIBLE);
-        txt.setVisibility(View.VISIBLE);
+        startBtn.setVisibility(View.VISIBLE);
+        infoTV.setVisibility(View.VISIBLE);
         ring.stop();
-        btn.setOnClickListener(new View.OnClickListener() {
+        startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ball = new Ball(getApplicationContext(), mActivity, ring, speed);
                 mainLayout.addView(ball, RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
-                btn.setVisibility(View.INVISIBLE);
-                txt.setVisibility(View.INVISIBLE);
+                startBtn.setVisibility(View.INVISIBLE);
+                infoTV.setVisibility(View.INVISIBLE);
                 ball.start();
                 ring.start();
             }

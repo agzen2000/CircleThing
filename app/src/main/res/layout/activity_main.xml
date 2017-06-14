@@ -4,7 +4,8 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.games.akash.circlething.MainActivity">
+    tools:context="com.games.akash.circlething.MainActivity"
+    android:background="#ffffff">
 
 
     <Button
@@ -23,6 +24,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="48dp"
         android:textSize="50dp"
+        android:textColor="#000000"
         android:text="CIRCLE THING" />
 
     <TextView
