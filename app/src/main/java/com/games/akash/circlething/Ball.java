@@ -29,13 +29,13 @@ public class Ball extends View {
     public final int RADIUS = deviceWidth/25;
     private MainActivity mainActivity;
     private double angle = 1000;
-    private static double vX;
-    private static double vY;
-    private static int vT = 5;
-    private static int left;
-    private static int right;
-    private static int top;
-    private static int bottom;
+    private double vX;
+    private double vY;
+    private  int vT;
+    private int left;
+    private int right;
+    private int top;
+    private int bottom;
     private boolean start = false;
     private Thread mThread;
     private Circle ring;
@@ -43,10 +43,9 @@ public class Ball extends View {
     public Ball(Context context, MainActivity main, Circle c, int speed) {
         super(context);
         mainActivity = main;
-        init(context);
         vT = speed;
         ring = c;
-
+        init(context);
     }
 
     public Ball(Context context, AttributeSet attrs) {
@@ -66,7 +65,9 @@ public class Ball extends View {
         ball.setBounds(x-RADIUS, y-RADIUS, x+RADIUS, y+RADIUS);
         if(angle == 1000) {
             Random rand = new Random();
-            angle = rand.nextInt(361);
+            do {
+                angle = rand.nextInt(361);
+            } while(angle < 5 || (angle>85 && angle<95) || (angle>175 && angle<185) || (angle>265 && angle<275) || angle > 355);
             angle = Math.toRadians(angle);
         }
 
@@ -98,31 +99,41 @@ public class Ball extends View {
             invalidate();
 
             int relativeX = left - x + RADIUS;
-            int relativeY = top - y + RADIUS;
-            int relativeRadius = ring.radius - ring.x/8 - RADIUS;
+            int relativeY = y - top - RADIUS;
+            int relativeRadius = ring.radius - x/8 - RADIUS;
 
             if(relativeRadius * relativeRadius <= relativeX * relativeX + relativeY * relativeY) {
                 boolean sin = true;
                 boolean cos = true;
-                if(Math.acos(relativeX/relativeRadius) < 0) {
+                if(relativeX < 0) {
                     cos = false;
                 }
-                if(Math.asin(relativeY/relativeRadius) < 0) {
+                if(relativeY < 0) {
                     sin = false;
                 }
 
                 if(sin && cos) {
                     mainActivity.complete(ring.angle == 270);
+                    stopBall();
                 } else if(sin && !cos) {
-                    mainActivity.complete(ring.angle == 0);
-                } else if(!sin && cos) {
                     mainActivity.complete(ring.angle == 180);
+                    stopBall();
+                } else if(!sin && cos) {
+                    mainActivity.complete(ring.angle == 0);
+                    stopBall();
                 } else if(!sin && !cos) {
                     mainActivity.complete(ring.angle == 90);
+                    stopBall();
                 }
             }
         }
     };
+
+    private void stopBall() {
+        vX = 0;
+        vY = 0;
+        ball.setBounds(x-RADIUS, y-RADIUS, x+RADIUS, y+RADIUS);
+    }
 
     final Runnable move = new Runnable()
     {
@@ -135,7 +146,7 @@ public class Ball extends View {
                     moveHandler.sendEmptyMessage(0);
                 }
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(33);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

@@ -58,11 +58,17 @@ public class Circle extends View
             if(lDown)
             {
                 angle-=90;
+                if(angle < 0) {
+                    angle = 270;
+                }
                 invalidate();
             }
             if(rDown)
             {
                 angle+=90;
+                if(angle == 360) {
+                    angle = 0;
+                }
                 invalidate();
             }
         }
@@ -83,6 +89,9 @@ public class Circle extends View
         }
     };
 
+    public void stop() {
+        start = false;
+    }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int eventAction = event.getAction();
